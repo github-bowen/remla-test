@@ -3,7 +3,20 @@ from flasgger import Swagger
 app = Flask(__name__)
 swagger = Swagger(app)
 
-@app.route("/", methods=["POST"])
+
+@app.route("/", methods=["GET"])
+def index():
+    """
+    This is the index page
+    ---
+    responses:
+      200:
+        description: A successful response
+    """
+    return "Hello, World!"
+
+
+@app.route("/predict", methods=["POST"])
 def predict():
     """
     Submit some JSON data to be processed
