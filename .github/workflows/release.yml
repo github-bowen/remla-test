@@ -8,16 +8,22 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Ensure tag is pushed to main branch
-      run: |
-        echo "ref: $GITHUB_REF"
-        echo "base ref: ${{ github.ref }}"
-        echo "sha: ${{ github.sha }}"
+      with:
+        fetch-depth: 0 # fetch all history for all branches and tags
 
-        branch=$(git branch -r --contains $GITHUB_SHA | grep origin/main || true)
-        if [ -z "$branch" ]; then
-          echo "❌ Tag is not pointing to main branch. Skipping."
+    - name: Ensure tag is pointing to main branch
+      run: |
+        # 获取当前标签指向的 commit SHA
+        TAG_COMMIT_SHA=${GITHUB_SHA}
+        
+        # 获取 main 分支的最新提交
+        MAIN_COMMIT_SHA=$(git rev-parse origin/main)
+        
+        # 判断 tag 的 commit 是否在 main 分支上
+        if git merge-base --is-ancestor $TAG_COMMIT_SHA $MAIN_COMMIT_SHA; then
+          echo "✅ Tag is part of the main branch."
+        else
+          echo "❌ Tag is not part of the main branch. Skipping."
           exit 1
         fi
 
