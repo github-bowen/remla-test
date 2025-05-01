@@ -7,6 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
+    - uses: actions/checkout@v4
+    
     - name: Ensure tag is pushed to main branch
       run: |
         echo "ref: $GITHUB_REF"
@@ -18,8 +20,6 @@ jobs:
           echo "❌ Tag is not pointing to main branch. Skipping."
           exit 1
         fi
-
-    - uses: actions/checkout@v4
 
     - name: Parse version info from tag
       run: |
